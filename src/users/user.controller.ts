@@ -4,12 +4,12 @@ import { UserService } from "./user.service";
 
 @Controller({ path: 'user' })
 export class UserController {
-    constructor(
-        private readonly userService: UserService
-    ) {}
+  constructor(
+    private readonly userService: UserService
+  ) {}
 
-    @Post()
-    async createUser(@Body() user: User): Promise<User> {
-        return await this.userService.createUser(user);
-    }
+  @Post()
+  async createUser(@Body() user: User): Promise<User> {
+    return await this.userService.createUser(user);
+  }
 }
