@@ -16,6 +16,7 @@ describe('ExpenseService', () => {
         {
           provide: getRepositoryToken(Expense),
           useValue: {
+            findOneBy: jest.fn(),
             create: jest.fn(),
             save: jest.fn()
           }
@@ -67,5 +68,38 @@ describe('ExpenseService', () => {
     }, user);
 
     expect(result.status).toBe(ExpenseStatus.PENDING);
+  });
+
+  it('expect exception when user with role different than manager attempts approval', async () => {
+    const user: any = { role: Role.EMPLOYEE };
+
+    repo.create.mockImplementation((e) => e as Expense);
+    repo.save.mockImplementation(async (e) => e as Expense);
+
+    const expense = await service.createExpense({
+      description: 'random expense',
+      amount: '1000.01'
+    }, user);
+
+    await expect(
+      service.approveExpense(expense.id, user)
+    ).rejects.toThrow();
+  });
+
+  it('expect approved status when user with manager role attempts approval', async () => {
+    const user: any = { role: Role.MANAGER };
+
+    repo.findOneBy.mockImplementation(async (e) => e as Expense);
+    repo.create.mockImplementation((e) => e as Expense);
+    repo.save.mockImplementation(async (e) => e as Expense);
+
+    const expense = await service.createExpense({
+      description: 'random expense',
+      amount: '1000.01'
+    }, user);
+
+    const result = await service.approveExpense(expense.id, user);
+
+    expect(result.status).toBe(ExpenseStatus.APPROVED);
   });
 });
