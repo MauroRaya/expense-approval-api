@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import type { SignInDTO } from './dto/sign-in.dto';
 import { AccessTokenDTO } from './dto/access-token.dto';
