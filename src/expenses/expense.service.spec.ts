@@ -71,24 +71,20 @@ describe('ExpenseService', () => {
   });
 
   it('expect exception when user with role different than manager attempts approval', async () => {
-    const user: any = { role: Role.EMPLOYEE };
-
     repo.create.mockImplementation((e) => e as Expense);
     repo.save.mockImplementation(async (e) => e as Expense);
 
     const expense = await service.createExpense({
       description: 'random expense',
       amount: '1000.01'
-    }, user);
+    }, 1);
 
     await expect(
-      service.approveExpense(expense.id, user)
+      service.approveExpense(expense.id, Role.EMPLOYEE)
     ).rejects.toThrow();
   });
 
   it('expect approved status when user with manager role attempts approval', async () => {
-    const user: any = { role: Role.MANAGER };
-
     repo.findOneBy.mockImplementation(async (e) => e as Expense);
     repo.create.mockImplementation((e) => e as Expense);
     repo.save.mockImplementation(async (e) => e as Expense);
@@ -96,9 +92,9 @@ describe('ExpenseService', () => {
     const expense = await service.createExpense({
       description: 'random expense',
       amount: '1000.01'
-    }, user);
+    }, 1);
 
-    const result = await service.approveExpense(expense.id, user);
+    const result = await service.approveExpense(expense.id, Role.MANAGER);
 
     expect(result.status).toBe(ExpenseStatus.APPROVED);
   });
