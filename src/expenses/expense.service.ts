@@ -12,10 +12,14 @@ export class ExpenseService {
     private readonly expenseRepository: Repository<Expense>
   ) {}
 
-  async createExpense(dto: CreateExpenseDTO, user: User): Promise<Expense> {
+  async createExpense(dto: CreateExpenseDTO, userId: number): Promise<Expense> {
     const status = Number(dto.amount) < 1000
       ? ExpenseStatus.APPROVED
       : ExpenseStatus.PENDING;
+
+    const user = { 
+      id: userId 
+    } as User;
 
     const expense = this.expenseRepository.create({
       description: dto.description,
@@ -27,8 +31,8 @@ export class ExpenseService {
     return await this.expenseRepository.save(expense);
   }
 
-  async approveExpense(expenseId: number, user: User): Promise<Expense> {
-    if (user.role !== Role.MANAGER) {
+  async approveExpense(expenseId: number, role: Role): Promise<Expense> {
+    if (role !== Role.MANAGER) {
       throw new Error('User with role different than manager cannot approve expenses');
     }
 
