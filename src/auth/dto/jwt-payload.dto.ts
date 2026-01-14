@@ -1,6 +1,6 @@
 import { Role } from "src/users/user.entity";
 
-export type JWTPayload = {
+export type JWTPayloadDTO = {
   sub: number;
   role: Role
   iat: number;
