@@ -6,6 +6,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/users/user.service';
 import { AccessTokenDTO } from './dto/access-token.dto';
+import { JWTPayloadDTO } from './dto/jwt-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,10 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id };
+    const payload: Omit<JWTPayloadDTO, 'iat'|'exp'> = { 
+      sub: user.id,
+      role: user.role
+    };
 
     return {
       access_token: await this.jwtService.signAsync(payload)
